@@ -27,9 +27,9 @@ t1 = PythonOperator(
 
 for i in [1,5,10]:
     wait = BashOperator(
-        task_id='wait_{i}',
+        task_id='wait_'+str(i),
         depends_on_past=False,
-        bash_command='sleep {i}',
+        bash_command='sleep '+str(i),
         dag=dag)
 
 t5 = DummyOperator(
