@@ -44,4 +44,4 @@ final_task = DummyOperator(
 for i in range(0, 6):
     email = DummyOperator(task_id='branch_{i}')
 
-    branching >> email >> join
+    branching >> email >> final_task
