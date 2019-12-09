@@ -20,33 +20,22 @@ def print_execution_date(**context):
     return
 
 t1 = PythonOperator(
-    task_id='t1',
+    task_id='print_execution_date',
     provide_context=True,
     python_callable=print_execution_date,
     dag=dag)
 
-t2 = BashOperator(
-    task_id='wait_5',
-    depends_on_past=False,
-    bash_command='sleep 5',
-    dag=dag)
-
-t3 = BashOperator(
-    task_id='wait_1',
-    depends_on_past=False,
-    bash_command='sleep 1',
-    dag=dag)
-
-t4 = BashOperator(
-    task_id='wait_10',
-    depends_on_past=False,
-    bash_command='sleep 10',
-    dag=dag)
+for i in [1,5,10]:
+    wait = BashOperator(
+        task_id='wait_{i}',
+        depends_on_past=False,
+        bash_command='sleep {i}',
+        dag=dag)
 
 t5 = DummyOperator(
-    task_id='t5',
+    task_id='the_end',
     dag=dag,
 )
 
 
-t1 >> [t2, t3, t4] >> t5
+t1 >> wait >> t5
