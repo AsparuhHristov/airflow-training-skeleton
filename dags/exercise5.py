@@ -3,7 +3,9 @@ import random
 import airflow
 from airflow.models import DAG
 from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.python_operator import PythonOperator
 from airflow.operators.python_operator import BranchPythonOperator
+from datetime import datetime, timedelta
 
 args = {
     'owner': 'Airflow',
@@ -11,15 +13,22 @@ args = {
 }
 
 dag = DAG(
-    dag_id='example_branch_operator',
+    dag_id='exercise5',
     default_args=args,
     schedule_interval="@daily",
 )
 
-run_this_first = DummyOperator(
-    task_id='run_this_first',
-    dag=dag,
-)
+def print_weekday(**context):
+    week_day = context['execution_date'].weekday()
+    print(week_day)
+    return week_day
+
+
+print_weekday = PythonOperator(
+    task_id='print_weekday',
+    provide_context=True,
+    python_callable=print_weekday,
+    dag=dag)
 
 options = ['branch_a', 'branch_b', 'branch_c', 'branch_d']
 
@@ -28,7 +37,7 @@ branching = BranchPythonOperator(
     python_callable=lambda: random.choice(options),
     dag=dag,
 )
-run_this_first >> branching
+print_weekday >> branching
 
 join = DummyOperator(
     task_id='join',
