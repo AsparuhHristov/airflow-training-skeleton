@@ -46,7 +46,7 @@ task1 >> task2  >> [task3, task4] >> task5
 dag2 = DAG(
     dag_id='exercise2b',
     default_args=args,
-    schedule_interval=[45 13 * * 1,3,5],
+    schedule_interval='45 13 * * 1,3,5',
 )
 
 task1b = DummyOperator(
